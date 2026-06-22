@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Manifestacao {
+  id            String   @id @default(uuid())
+  protocolo     String   @unique @default(uuid())
+
+  tipo          TipoManifestacao
+  secretaria    String
+  categoria     String
+  descricao     String
+
+  nomeCidadao   String?
+  telefone      String?
+  anonimo       Boolean  @default(false)
+
+  rua           String?
+  bairro        String?
+
+  dataRegistro  DateTime @default(now())
+  prazoDias     Int      @default(20)
+  dataLimite    DateTime
+
+  prioridade    Prioridade @default(MEDIO)
+  status        Status     @default(EM_ANDAMENTO)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  historico     HistoricoStatus[]
+}
+
+model Usuario {
+  id        String   @id @default(uuid())
+  nome      String
+  email     String   @unique
+  senha     String
+  cargo     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HistoricoStatus {
+  id              String   @id @default(uuid())
+  manifestacaoId  String
+  statusAnterior  Status
+  statusNovo      Status
+  usuarioId       String
+  usuarioNome     String
+  criadoEm        DateTime @default(now())
+
+  manifestacao    Manifestacao @relation(fields: [manifestacaoId], references: [id])
+}
+
+enum TipoManifestacao {
+  RECLAMACAO
+  DENUNCIA
+  SUGESTAO
+  SOLICITACAO
+  DUVIDA
+  ELOGIO
+}
+
+enum Prioridade {
+  ALTO
+  MEDIO
+  BAIXO
+}
+
+enum Status {
+  EM_ANDAMENTO
+  ATENDIDO
+  ARQUIVADO
+  ATRASADO
+}
