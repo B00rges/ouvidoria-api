@@ -41,10 +41,16 @@ model Usuario {
   nome      String
   email     String   @unique
   senha     String
-  cargo     String?
+  cargo     Cargo
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Cargo {
+  ADMIN
+  OUVIDOR
+  ATENDENTE
 }
 
 model HistoricoStatus {

@@ -1,12 +1,16 @@
 const manifestacaoService = require('../services/manifestacao.service')
+const { criarManifestacaoSchema } = require('../validations/manifestacao.validation')
 
 
 async function criar(req, res) {
   try {
-    const dados = req.body
-    const manifestacao = await manifestacaoService.criar(dados)
+    const dadosValidados = criarManifestacaoSchema.parse(req.body)
+    const manifestacao = await manifestacaoService.criar(dadosValidados)
     return res.status(201).json(manifestacao)
   } catch (error) {
+    if (error.name === 'ZodError') {
+  return res.status(400).json({ erro: 'Dados inválidos', detalhes: error.issues })
+}
     return res.status(400).json({ erro: error.message })
   }
 }

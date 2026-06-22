@@ -1,11 +1,15 @@
 const usuarioService = require('../services/usuario.service')
+const { criarUsuarioSchema } = require('../validations/usuario.validation')
 
 async function criar(req, res) {
   try {
-    const dados = req.body
-    const usuario = await usuarioService.criar(dados)
+    const dadosValidados = criarUsuarioSchema.parse(req.body)
+    const usuario = await usuarioService.criar(dadosValidados)
     return res.status(201).json(usuario)
   } catch (error) {
+    if (error.name === 'ZodError') {
+  return res.status(400).json({ erro: 'Dados inválidos', detalhes: error.issues })
+}
     return res.status(400).json({ erro: error.message })
   }
 }
