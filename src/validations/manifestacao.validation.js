@@ -16,4 +16,10 @@ const criarManifestacaoSchema = z.object({
   prazoDias: z.number().optional()
 })
 
-module.exports = { criarManifestacaoSchema }
+const atualizarStatusSchema = z.object({
+  status: z.enum(['EM_ANDAMENTO', 'ATENDIDO', 'ARQUIVADO', 'ATRASADO'], {
+    errorMap: () => ({ message: 'Status inválido. Use: EM_ANDAMENTO, ATENDIDO, ARQUIVADO ou ATRASADO' })
+  })
+})
+
+module.exports = { criarManifestacaoSchema, atualizarStatusSchema }

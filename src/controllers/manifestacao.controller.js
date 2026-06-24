@@ -1,6 +1,6 @@
 const manifestacaoService = require('../services/manifestacao.service')
-const { criarManifestacaoSchema } = require('../validations/manifestacao.validation')
-
+const { criarManifestacaoSchema, atualizarStatusSchema } = require('../validations/manifestacao.validation')
+const { ZodError } = require('zod')
 
 async function criar(req, res) {
   try {
@@ -43,13 +43,16 @@ async function buscarPorId(req, res) {
 async function atualizarStatus(req, res) {
   try {
     const { id } = req.params
-    const { status } = req.body
+    const { status } = atualizarStatusSchema.parse(req.body)
     const usuario = req.usuario
-    
+
     const manifestacao = await manifestacaoService.atualizarStatus(id, status, usuario)
-    
+
     return res.status(200).json(manifestacao)
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ erro: 'Dados inválidos', detalhes: error.issues })
+    }
     return res.status(500).json({ erro: error.message })
   }
 }
