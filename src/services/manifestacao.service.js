@@ -1,10 +1,16 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+
+function calcularDataLimite(dataRegistro, prazoDias = 20) {
+  const dataLimite = new Date(dataRegistro)
+  dataLimite.setDate(dataLimite.getDate() + prazoDias)
+  return dataLimite
+}
+
 async function criar(dados) {
   const dataRegistro = new Date()
-  const dataLimite = new Date(dataRegistro)
-  dataLimite.setDate(dataLimite.getDate() + (dados.prazoDias || 20))
+  const dataLimite = calcularDataLimite(dataRegistro, dados.prazoDias)
 
   const manifestacao = await prisma.manifestacao.create({
     data: {
@@ -80,5 +86,4 @@ async function buscarHistorico(manifestacaoId) {
 }
 
 
-module.exports = { criar, listar, buscarPorId, atualizarStatus, buscarHistorico }
-
+module.exports = { criar, listar, buscarPorId, atualizarStatus, buscarHistorico, calcularDataLimite }
