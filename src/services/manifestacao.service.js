@@ -1,11 +1,14 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-
 function calcularDataLimite(dataRegistro, prazoDias = 20) {
   const dataLimite = new Date(dataRegistro)
   dataLimite.setDate(dataLimite.getDate() + prazoDias)
   return dataLimite
+}
+
+function statusMudou(statusAtual, novoStatus) {
+  return statusAtual !== novoStatus
 }
 
 async function criar(dados) {
@@ -53,12 +56,10 @@ async function atualizarStatus(id, novoStatus, usuario) {
     throw new Error('Manifestação não encontrada')
   }
 
-  // Verificação nova: se não mudou nada, para aqui
-  if (manifestacaoAtual.status === novoStatus) {
+  if (!statusMudou(manifestacaoAtual.status, novoStatus)) {
     return manifestacaoAtual
   }
 
-  // Só chega aqui se o status realmente mudou
   const manifestacaoAtualizada = await prisma.manifestacao.update({
     where: { id },
     data: { status: novoStatus }
@@ -77,7 +78,6 @@ async function atualizarStatus(id, novoStatus, usuario) {
   return manifestacaoAtualizada
 }
 
-
 async function buscarHistorico(manifestacaoId) {
   return await prisma.historicoStatus.findMany({
     where: { manifestacaoId },
@@ -85,5 +85,4 @@ async function buscarHistorico(manifestacaoId) {
   })
 }
 
-
-module.exports = { criar, listar, buscarPorId, atualizarStatus, buscarHistorico, calcularDataLimite }
+module.exports = { criar, listar, buscarPorId, atualizarStatus, buscarHistorico, calcularDataLimite, statusMudou }

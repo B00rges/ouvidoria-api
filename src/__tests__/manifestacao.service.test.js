@@ -1,4 +1,4 @@
-const { calcularDataLimite } = require('../services/manifestacao.service')
+const { calcularDataLimite, statusMudou } = require('../services/manifestacao.service')
 
 describe('calcularDataLimite', () => {
   test('deve somar 20 dias por padrão quando prazoDias não for informado', () => {
@@ -15,5 +15,17 @@ describe('calcularDataLimite', () => {
 
     const esperado = new Date('2026-07-01')
     expect(resultado).toEqual(esperado)
+  })
+})
+
+describe('statusMudou', () => {
+  test('deve retornar true quando o status for diferente', () => {
+    const resultado = statusMudou('EM_ANDAMENTO', 'ATENDIDO')
+    expect(resultado).toBe(true)
+  })
+
+  test('deve retornar false quando o status for igual', () => {
+    const resultado = statusMudou('ATENDIDO', 'ATENDIDO')
+    expect(resultado).toBe(false)
   })
 })
