@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+const iaService = require('./ia.service')
 
 function calcularDataLimite(dataRegistro, prazoDias = 20) {
   const dataLimite = new Date(dataRegistro)
@@ -15,19 +16,35 @@ async function criar(dados) {
   const dataRegistro = new Date()
   const dataLimite = calcularDataLimite(dataRegistro, dados.prazoDias)
 
+  let descricaoFormal = null
+  let categoriaSugerida = dados.categoria
+  let secretariaSugerida = dados.secretaria
+  let prioridadeSugerida = dados.prioridade || 'MEDIO'
+
+  try {
+    const classificacao = await iaService.classificarManifestacao(dados.descricao)
+    descricaoFormal = classificacao.descricaoFormal
+    categoriaSugerida = classificacao.categoria
+    secretariaSugerida = classificacao.secretaria
+    prioridadeSugerida = classificacao.prioridade
+  } catch (error) {
+    console.log('IA indisponível, seguindo sem classificação automática:', error.message)
+  }
+
   const manifestacao = await prisma.manifestacao.create({
     data: {
       tipo: dados.tipo,
-      secretaria: dados.secretaria,
-      categoria: dados.categoria,
+      secretaria: secretariaSugerida,
+      categoria: categoriaSugerida,
       descricao: dados.descricao,
+      descricaoFormal,
       nomeCidadao: dados.nomeCidadao || null,
       telefone: dados.telefone || null,
       anonimo: dados.anonimo || false,
       rua: dados.rua || null,
       bairro: dados.bairro || null,
       dataLimite,
-      prioridade: dados.prioridade || 'MEDIO',
+      prioridade: prioridadeSugerida,
     }
   })
 

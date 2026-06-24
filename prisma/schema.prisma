@@ -8,32 +8,33 @@ datasource db {
 }
 
 model Manifestacao {
-  id            String   @id @default(uuid())
-  protocolo     String   @unique @default(uuid())
+  id              String   @id @default(uuid())
+  protocolo       String   @unique @default(uuid())
 
-  tipo          TipoManifestacao
-  secretaria    String
-  categoria     String
-  descricao     String
+  tipo            TipoManifestacao
+  secretaria      String
+  categoria       String
+  descricao       String
+  descricaoFormal String?
 
-  nomeCidadao   String?
-  telefone      String?
-  anonimo       Boolean  @default(false)
+  nomeCidadao     String?
+  telefone        String?
+  anonimo         Boolean  @default(false)
 
-  rua           String?
-  bairro        String?
+  rua             String?
+  bairro          String?
 
-  dataRegistro  DateTime @default(now())
-  prazoDias     Int      @default(20)
-  dataLimite    DateTime
+  dataRegistro    DateTime @default(now())
+  prazoDias       Int      @default(20)
+  dataLimite      DateTime
 
-  prioridade    Prioridade @default(MEDIO)
-  status        Status     @default(EM_ANDAMENTO)
+  prioridade      Prioridade @default(MEDIO)
+  status          Status     @default(EM_ANDAMENTO)
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  historico     HistoricoStatus[]
+  historico       HistoricoStatus[]
 }
 
 model Usuario {
@@ -86,4 +87,3 @@ enum Status {
   ARQUIVADO
   ATRASADO
 }
-

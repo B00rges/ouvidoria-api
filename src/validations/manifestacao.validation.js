@@ -4,8 +4,8 @@ const criarManifestacaoSchema = z.object({
   tipo: z.enum(['RECLAMACAO', 'DENUNCIA', 'SUGESTAO', 'SOLICITACAO', 'DUVIDA', 'ELOGIO'], {
     errorMap: () => ({ message: 'Tipo inválido. Use: RECLAMACAO, DENUNCIA, SUGESTAO, SOLICITACAO, DUVIDA ou ELOGIO' })
   }),
-  secretaria: z.string().min(1, 'Secretaria é obrigatória'),
-  categoria: z.string().min(1, 'Categoria é obrigatória'),
+  secretaria: z.string().optional(),
+  categoria: z.string().optional(),
   descricao: z.string().min(10, 'Descrição deve ter pelo menos 10 caracteres'),
   nomeCidadao: z.string().optional(),
   telefone: z.string().optional(),
